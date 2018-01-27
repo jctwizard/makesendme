@@ -1,19 +1,19 @@
 <html>
 <head>
-<title>creagan life</title>
+<title>make send</title>
 </head>
 
 <style>
 html
 {
-  background-color: black;
+  background-color: coral;
   font-size: 3em;
 }
 
 body
 {
   font-family: monospace;
-  color: white;
+  color: lightblue;
 }
 
 #inputBar
@@ -64,25 +64,26 @@ body
 </div>
 
 <div id="subtitle">
-  things to do together
+
 </div>
 
 <ul id="list"></ul>
 
 </body>
 
-<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
 
 <script>
-// Firebase config
+
+// Initialize Firebase
 var config = {
-    apiKey: "AIzaSyC1yg4DwTcGN3VkRs6Zs4Ik2b29G6UVR44",
-    authDomain: "creagan-3ec29.firebaseapp.com",
-    databaseURL: "https://creagan-3ec29.firebaseio.com",
-    projectId: "creagan-3ec29",
-    storageBucket: "creagan-3ec29.appspot.com",
-    messagingSenderId: "418884958923"
-  };
+  apiKey: "AIzaSyCtyO5e3BdcWxyR7YsKpTvA66dklMKDAcY",
+  authDomain: "makesendme.firebaseapp.com",
+  databaseURL: "https://makesendme.firebaseio.com",
+  projectId: "makesendme",
+  storageBucket: "makesendme.appspot.com",
+  messagingSenderId: "593040807046"
+};
 
 var list;
 var listParent;
@@ -103,7 +104,7 @@ function init()
 
 function updateItems()
 {
-  firebase.database().ref("list").once("value").then(function(data) {
+  firebase.database().ref("bubbles").once("value").then(function(data) {
     list = data.val();
     displayItems();
   });
@@ -135,36 +136,21 @@ function addNewItem()
   displayItems();
 }
 
-function addItem(item, index)
+function addBubble(bubble, index)
 {
-  var itemElement = document.createElement("li");
-  itemElement.innerHTML = item["item"];
-  itemElement.id = index.toString();
-  itemElement.setAttribute("onclick", "strikeItem(" + index.toString() + ")");
+  var bubbleElement = document.createElement("li");
+  bubbleElement.innerHTML = bubble["data"];
+  bubbleElement.id = index.toString();
+  bubbleElement.setAttribute("onclick", "openBubble(" + index.toString() + ")");
 
-  if (item["scored"] == "true")
-  {
-    itemElement.style.textDecoration = "line-through";
-  }
-
-  listParent.appendChild(itemElement);
+  listParent.appendChild(bubbleElement);
 }
 
-function strikeItem(index)
+function openBubble(index)
 {
-  console.log("clicked")
-
-  if (list[index.toString()]["scored"] == "false")
-  {
-    list[index.toString()]["scored"] = "true";
-  }
-  else {
-      list[index.toString()]["scored"] = "false";
-  }
-
   firebase.database().ref("list").set(list);
 
-  displayItems();
+  displayBubbles();
 }
 </script>
 </html>
