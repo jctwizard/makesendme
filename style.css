@@ -1,0 +1,53 @@
+html
+{
+background-color: coral;
+font-size: 3em;
+}
+
+body
+{
+font-family: monospace;
+color: lightblue;
+}
+
+#viewer
+{
+position: absolute;
+width: 100%;
+height: 60;
+}
+
+#inputBar
+{
+  padding-left: 2em;
+  padding-top: 1em;
+}
+
+#newBubble
+{
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+}
+
+#addBubble
+{
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+}
+
+#title
+{
+  font-weight: bold;
+  padding-left: 2em;
+  padding-top: 1em;
+}
+
+#subtitle
+{
+  font-style: italic;
+  text-decoration: underline;
+  padding-left: 2em;
+  padding-top: 1em;
+}

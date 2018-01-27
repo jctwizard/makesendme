@@ -1,80 +1,28 @@
 <html>
 <head>
 <title>make send</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
-<style>
-html
-{
-  background-color: coral;
-  font-size: 3em;
-}
-
-body
-{
-  font-family: monospace;
-  color: lightblue;
-}
-
-#inputBar
-{
-  padding-left: 2em;
-  padding-top: 1em;
-}
-
-#newItem
-{
-  font-family: monospace;
-  color: black;
-  font-size: 1em;
-}
-
-#addItem
-{
-  font-family: monospace;
-  color: black;
-  font-size: 1em;
-}
-
-#title
-{
-  font-weight: bold;
-  padding-left: 2em;
-  padding-top: 1em;
-}
-
-#subtitle
-{
-  font-style: italic;
-  text-decoration: underline;
-  padding-left: 2em;
-  padding-top: 1em;
-}
-</style>
-
 <body onload="init()">
-
-<div id="title">
-  welome home!
-</div>
-
-<div id="inputBar">
-  <input id="newItem" type="text" value=""></input>
-  <button id="addItem" onclick="addNewItem();">add</button>
-</div>
-
-<div id="subtitle">
-
-</div>
-
-<ul id="list"></ul>
-
+	<input id="query" value="poly"></input>
+	<button onclick="searchPoly()">search</button>
+  <br />
+	<span id="results"></span>
+  <br />
+  <span id="viewer"></span>
 </body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+<script src="third_party/OBJLoader.js"></script>
+<script src="third_party/MTLLoader.js"></script>
+
+<script src="main.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
 
 <script>
-
+/*
 // Initialize Firebase
 var config = {
   apiKey: "AIzaSyCtyO5e3BdcWxyR7YsKpTvA66dklMKDAcY",
@@ -94,52 +42,54 @@ function init()
 
   firebase.initializeApp(config);
 
-  updateItems();
+  updateBubbles();
 
   setInterval(function()
   {
-    updateItems();
+    updateBubbles();
   }, 3000);
 }
 
-function updateItems()
+function updateBubbles()
 {
   firebase.database().ref("bubbles").once("value").then(function(data) {
     list = data.val();
-    displayItems();
+    displayBubbles();
   });
 }
 
-function displayItems()
+function displayBubbles()
 {
   listParent.innerHTML = "";
 
-  for (var itemIndex = Object.keys(list).length - 1; itemIndex >= 0; itemIndex--)
+  for (var bubbleIndex = Object.keys(list).length - 1; bubbleIndex >= 0; bubbleIndex--)
   {
-    addItem(list[itemIndex.toString()], itemIndex);
+    addBubble(list[bubbleIndex.toString()], bubbleIndex);
   }
 }
 
-function addNewItem()
+function addNewBubble(name, password)
 {
-  updateItems();
+  updateBubbles();
 
-  var item = document.getElementById("newItem").value;
-  document.getElementById("newItem").value = "";
+  var bubble = document.getElementById("newBubble").value;
+  document.getElementById("newBubble").value = "";
 
   list[(Object.keys(list).length).toString()] = {};
-  list[(Object.keys(list).length - 1).toString()]["item"] = item;
-  list[(Object.keys(list).length - 1).toString()]["scored"] = "scored";
+  list[(Object.keys(list).length - 1).toString()]["name"] = name;
+  list[(Object.keys(list).length - 1).toString()]["version"] = 0;
+  list[(Object.keys(list).length - 1).toString()]["data"] = {};
+  list[(Object.keys(list).length - 1).toString()]["password"] = password;
 
   firebase.database().ref("list").set(list);
 
-  displayItems();
+  displayBubbles();
 }
 
 function addBubble(bubble, index)
 {
   var bubbleElement = document.createElement("li");
-  bubbleElement.innerHTML = bubble["data"];
+  bubbleElement.innerHTML = bubble["name"];
   bubbleElement.id = index.toString();
   bubbleElement.setAttribute("onclick", "openBubble(" + index.toString() + ")");
 
@@ -151,6 +101,6 @@ function openBubble(index)
   firebase.database().ref("list").set(list);
 
   displayBubbles();
-}
+}*/
 </script>
 </html>
