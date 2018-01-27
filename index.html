@@ -1,0 +1,170 @@
+<html>
+<head>
+<title>creagan life</title>
+</head>
+
+<style>
+html
+{
+  background-color: black;
+  font-size: 3em;
+}
+
+body
+{
+  font-family: monospace;
+  color: white;
+}
+
+#inputBar
+{
+  padding-left: 2em;
+  padding-top: 1em;
+}
+
+#newItem
+{
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+}
+
+#addItem
+{
+  font-family: monospace;
+  color: black;
+  font-size: 1em;
+}
+
+#title
+{
+  font-weight: bold;
+  padding-left: 2em;
+  padding-top: 1em;
+}
+
+#subtitle
+{
+  font-style: italic;
+  text-decoration: underline;
+  padding-left: 2em;
+  padding-top: 1em;
+}
+</style>
+
+<body onload="init()">
+
+<div id="title">
+  welome home!
+</div>
+
+<div id="inputBar">
+  <input id="newItem" type="text" value=""></input>
+  <button id="addItem" onclick="addNewItem();">add</button>
+</div>
+
+<div id="subtitle">
+  things to do together
+</div>
+
+<ul id="list"></ul>
+
+</body>
+
+<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+
+<script>
+// Firebase config
+var config = {
+    apiKey: "AIzaSyC1yg4DwTcGN3VkRs6Zs4Ik2b29G6UVR44",
+    authDomain: "creagan-3ec29.firebaseapp.com",
+    databaseURL: "https://creagan-3ec29.firebaseio.com",
+    projectId: "creagan-3ec29",
+    storageBucket: "creagan-3ec29.appspot.com",
+    messagingSenderId: "418884958923"
+  };
+
+var list;
+var listParent;
+
+function init()
+{
+  listParent = document.getElementById("list");
+
+  firebase.initializeApp(config);
+
+  updateItems();
+
+  setInterval(function()
+  {
+    updateItems();
+  }, 3000);
+}
+
+function updateItems()
+{
+  firebase.database().ref("list").once("value").then(function(data) {
+    list = data.val();
+    displayItems();
+  });
+}
+
+function displayItems()
+{
+  listParent.innerHTML = "";
+
+  for (var itemIndex = Object.keys(list).length - 1; itemIndex >= 0; itemIndex--)
+  {
+    addItem(list[itemIndex.toString()], itemIndex);
+  }
+}
+
+function addNewItem()
+{
+  updateItems();
+
+  var item = document.getElementById("newItem").value;
+  document.getElementById("newItem").value = "";
+
+  list[(Object.keys(list).length).toString()] = {};
+  list[(Object.keys(list).length - 1).toString()]["item"] = item;
+  list[(Object.keys(list).length - 1).toString()]["scored"] = "scored";
+
+  firebase.database().ref("list").set(list);
+
+  displayItems();
+}
+
+function addItem(item, index)
+{
+  var itemElement = document.createElement("li");
+  itemElement.innerHTML = item["item"];
+  itemElement.id = index.toString();
+  itemElement.setAttribute("onclick", "strikeItem(" + index.toString() + ")");
+
+  if (item["scored"] == "true")
+  {
+    itemElement.style.textDecoration = "line-through";
+  }
+
+  listParent.appendChild(itemElement);
+}
+
+function strikeItem(index)
+{
+  console.log("clicked")
+
+  if (list[index.toString()]["scored"] == "false")
+  {
+    list[index.toString()]["scored"] = "true";
+  }
+  else {
+      list[index.toString()]["scored"] = "false";
+  }
+
+  firebase.database().ref("list").set(list);
+
+  displayItems();
+}
+</script>
+</html>
