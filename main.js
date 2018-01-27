@@ -2,14 +2,18 @@ const WIDTH = viewer.offsetWidth;
 const HEIGHT = viewer.offsetHeight;
 
 var camera = new THREE.OrthographicCamera( -0.5, 0.5, 0.5, -0.5, 0, 100);
-camera.position.set( 0, 100, 0 );
-camera.lookAt( 0, 0, 0 );
+camera.position.set(0, 0, -100);
+camera.lookAt(0, 0, 0);
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0x222222 );
 
+var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
+scene.add( ambient );
+
 var light = new THREE.DirectionalLight( 0xffffff, 0.75 );
-light.position.set( 0, 0, 0 );
+light.position.set( 1, 0, 1 );
+light.lookAt(0, 0, 0);
 scene.add( light );
 
 var renderer = new THREE.WebGLRenderer();
@@ -20,15 +24,17 @@ viewer.appendChild( renderer.domElement );
 var geometry = new THREE.SphereGeometry( 0.5, 32, 32 );
 var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 var globe = new THREE.Mesh( geometry, material );
-globe.position.set(0, 0, 0.5);
-scene.add( globe );
+globe.position.set(0, -0.5, 0);
+scene.add(globe);
 
 var selectedAsset;
 var selectedFormat;
 
 function init()
 {
+  viewer.addEventListener('mousedown', onMouseDown, false);
 
+  searchPoly();
 }
 
 function animate()
@@ -106,4 +112,60 @@ function createImage(asset)
   }
 
   return image;
+}
+
+function addObject(x, y, z)
+{
+  var obj = selectedFormat.root;
+  var mtl = selectedFormat.resources.find(resource => { return resource.url.endsWith('mtl') });
+
+  var path = obj.url.slice(0, obj.url.indexOf(obj.relativePath));
+
+  var loader = new THREE.MTLLoader();
+  loader.setCrossOrigin(true);
+  loader.setTexturePath(path);
+  loader.load(mtl.url, function (materials)
+  {
+    var loader = new THREE.OBJLoader();
+    loader.setMaterials( materials );
+
+    loader.load( obj.url, function(object)
+    {
+      var box = new THREE.Box3();
+      box.setFromObject(object);
+
+      // re-center
+      var center = box.getCenter();
+      center.y = box.min.y;
+      object.position.sub(center);
+
+      // scale
+      var scaler = new THREE.Group();
+      scaler.position.set(x, y, z);
+      scaler.add(object);
+      scaler.scale.setScalar(box.getSize().length() * 0.01);
+      scene.add(scaler);
+    });
+  });
+}
+
+function onMouseDown(e)
+{
+  e.preventDefault();
+
+  var origin = new THREE.Vector3();
+  origin.x = ((event.clientX - viewer.offsetLeft) / WIDTH) - 0.5;
+  origin.z = ((event.clientY - viewer.offsetTop) / WIDTH) - 0.5;
+  origin.z = -10;
+
+  var raycaster = new THREE.Raycaster(origin, new THREE.Vector3(0, 0, 1), 0, 100);
+
+  var intersects = raycaster.intersectObject(globe);
+
+  console.log(intersects);
+
+  if (intersects.object == globe)
+  {
+    addObject(intersects.point.x, intersects.point.y, intersects.point.z);
+	}
 }
