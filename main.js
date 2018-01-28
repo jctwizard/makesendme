@@ -178,8 +178,6 @@ function addObject(x, y, z)
   loader.setTexturePath(path);
   loader.load(mtl.url, function (materials)
   {
-    materials.materials[0] = skyMaterial;
-
     var loader = new THREE.OBJLoader();
     loader.setMaterials( materials );
 
@@ -192,6 +190,14 @@ function addObject(x, y, z)
       var center = box.getCenter();
       center.y = box.min.y;
       object.position.sub(center);
+
+      object.traverse(function (child)
+      {
+        if (child instanceof THREE.Mesh)
+        {
+            child.material = skyMaterial;
+        }
+      });
 
       // scale
       var scaler = new THREE.Group();

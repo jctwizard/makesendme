@@ -1,0 +1,130 @@
+<html>
+<head>
+<title>make send</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body onload="init()">
+	<input id="query" value="tree"></input>
+	<button onclick="searchPoly()">search</button>
+  <br />
+	<span id="results"></span>
+  <br />
+  <span id="viewer"></span>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+<script src="third_party/OBJLoader.js"></script>
+<script src="third_party/MTLLoader.js"></script>
+
+<script src="main.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+	uniform vec3 colour1;
+	uniform vec3 colour2;
+  varying vec2 vUv;
+
+	void main()
+	{
+		vUv = uv;
+		vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+		gl_Position = projectionMatrix * mvPosition;
+	}
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+	uniform vec3 colour1;
+	uniform vec3 colour2;
+  varying vec2 vUv;
+
+	void main()
+	{
+		gl_FragColor = vec4((1. - vUv.y) * colour1 + vUv.y * colour2, 1.);
+	}
+</script>
+
+<script>
+/*
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyCtyO5e3BdcWxyR7YsKpTvA66dklMKDAcY",
+  authDomain: "makesendme.firebaseapp.com",
+  databaseURL: "https://makesendme.firebaseio.com",
+  projectId: "makesendme",
+  storageBucket: "makesendme.appspot.com",
+  messagingSenderId: "593040807046"
+};
+
+var list;
+var listParent;
+
+function init()
+{
+  listParent = document.getElementById("list");
+
+  firebase.initializeApp(config);
+
+  updateBubbles();
+
+  setInterval(function()
+  {
+    updateBubbles();
+  }, 3000);
+}
+
+function updateBubbles()
+{
+  firebase.database().ref("bubbles").once("value").then(function(data) {
+    list = data.val();
+    displayBubbles();
+  });
+}
+
+function displayBubbles()
+{
+  listParent.innerHTML = "";
+
+  for (var bubbleIndex = Object.keys(list).length - 1; bubbleIndex >= 0; bubbleIndex--)
+  {
+    addBubble(list[bubbleIndex.toString()], bubbleIndex);
+  }
+}
+
+function addNewBubble(name, password)
+{
+  updateBubbles();
+
+  var bubble = document.getElementById("newBubble").value;
+  document.getElementById("newBubble").value = "";
+
+  list[(Object.keys(list).length).toString()] = {};
+  list[(Object.keys(list).length - 1).toString()]["name"] = name;
+  list[(Object.keys(list).length - 1).toString()]["version"] = 0;
+  list[(Object.keys(list).length - 1).toString()]["data"] = {};
+  list[(Object.keys(list).length - 1).toString()]["password"] = password;
+
+  firebase.database().ref("list").set(list);
+
+  displayBubbles();
+}
+
+function addBubble(bubble, index)
+{
+  var bubbleElement = document.createElement("li");
+  bubbleElement.innerHTML = bubble["name"];
+  bubbleElement.id = index.toString();
+  bubbleElement.setAttribute("onclick", "openBubble(" + index.toString() + ")");
+
+  listParent.appendChild(bubbleElement);
+}
+
+function openBubble(index)
+{
+  firebase.database().ref("list").set(list);
+
+  displayBubbles();
+}*/
+</script>
+</html>
