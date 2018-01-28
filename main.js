@@ -31,13 +31,17 @@ var selectedAsset;
 var selectedFormat;
 
 var skyUniforms, skyMaterial, skyMesh;
+var landUniforms, landMaterial;
 
 skyMesh = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), new THREE.MeshBasicMaterial( {color: 0xffff00} ));
 
+skyMesh.position.z = 100;
 skyMesh.rotation.x = Math.PI;
 skyMesh.position.y = -0.5
 
 scene.add(skyMesh);
+
+var objects = [];
 
 function init()
 {
@@ -45,9 +49,15 @@ function init()
 
   searchPoly();
 
+  setSkyColour(2, "distant galaxy");
+  setLandColour(2, "jurassic coast");
+}
+
+function setSkyColours(colour1In, colour2In)
+{
   skyUniforms = {
-		colour1: { type: "v3", value: new THREE.Vector3(1, 0, 0) },
-		colour2: { type: "v3", value: new THREE.Vector3(0, 0, 1) }
+		colour1: { type: "v3", value: colour1In },
+		colour2: { type: "v3", value: colour2In }
 	};
 	skyMaterial = new THREE.ShaderMaterial( {
 		uniforms: skyUniforms,
@@ -58,12 +68,32 @@ function init()
   skyMesh.material = skyMaterial;
 }
 
+function setLandColours(colour1In, colour2In)
+{
+  landUniforms = {
+		colour1: { type: "v3", value: colour1In },
+		colour2: { type: "v3", value: colour2In }
+	};
+	landMaterial = new THREE.ShaderMaterial( {
+		uniforms: landUniforms,
+		vertexShader: document.getElementById( 'vertexShader' ).textContent,
+		fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+	});
+
+  globe.material = landMaterial;
+}
+
 function animate()
 {
 	var time = performance.now() / 1000;
 
 	globe.rotation.z = time / 10;
 	skyMesh.rotation.z = time / 10;
+
+  for (var object = 0; object < objects.length; object++)
+  {
+    objects[object].rotation.y = time / 5;
+  }
 
 	renderer.render( scene, camera );
 	requestAnimationFrame( animate );
@@ -148,6 +178,8 @@ function addObject(x, y, z)
   loader.setTexturePath(path);
   loader.load(mtl.url, function (materials)
   {
+    materials.materials[0] = skyMaterial;
+
     var loader = new THREE.OBJLoader();
     loader.setMaterials( materials );
 
@@ -163,14 +195,16 @@ function addObject(x, y, z)
 
       // scale
       var scaler = new THREE.Group();
-      scaler.position.set(0, 0.45, 0);
+      scaler.position.set(0, 0.49, 0);
       scaler.add(object);
-      scaler.scale.setScalar(1 / box.getSize().length() * 0.5);
+      scaler.scale.setScalar(1 / box.getSize().length() * 0.2);
 
       var pivot = new THREE.Group();
       pivot.rotation.z = -globe.rotation.z;
       globe.add(pivot);
       pivot.add(scaler);
+
+      objects.push(scaler);
     });
   });
 }
