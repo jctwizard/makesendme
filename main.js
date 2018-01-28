@@ -74,11 +74,21 @@ var config = {
 
 function loadBubble(newRoomName)
 {
-  firebase.database().ref("bubbles/" + newRoomName + "/data").once("value").then(function(data) {
+  scene.remove(globe);
+
+  globe = new THREE.Mesh( geometry, landMaterial );
+  globe.position.set(0, -0.5, 0);
+  scene.add(globe);
+
+  objects = [];
+
+  firebase.database().ref("bubbles/" + newRoomName + "/data").once("value").then(function(data)
+  {
     bubble = data.val();
 
     setSkyColours(new THREE.Vector3(bubble["skyColour1"]["x"], bubble["skyColour1"]["y"], bubble["skyColour1"]["z"]), new THREE.Vector3(bubble["skyColour2"]["x"], bubble["skyColour2"]["y"], bubble["skyColour2"]["z"]));
     setLandColours(new THREE.Vector3(bubble["landColour1"]["x"], bubble["landColour1"]["y"], bubble["landColour1"]["z"]), new THREE.Vector3(bubble["landColour2"]["x"], bubble["landColour2"]["y"], bubble["landColour2"]["z"]));
+
 
     var bubbleObjects = bubble["objects"];
 
@@ -93,6 +103,16 @@ function loadBubble(newRoomName)
 function sendGame()
 {
   setBubble();
+}
+
+function searchWorld()
+{
+  var worldName = document.getElementById("worldQuery").value;
+
+  console.log(worldName);
+
+  roomName = worldName;
+  loadBubble(roomName);
 }
 
 function setBubble()
@@ -211,20 +231,17 @@ function loadBubbleObject(rotation, id, colour1In, colour2In)
 
           object.traverse(function (child)
           {
-            if (child instanceof THREE.Mesh)
-            {
               objectUniforms = {
-            		colour1: { type: "v3", value: colour1In },
-            		colour2: { type: "v3", value: colour2In }
-            	};
-            	objectMaterial = new THREE.ShaderMaterial( {
-            		uniforms: skyUniforms,
-            		vertexShader: document.getElementById( 'vertexShader' ).textContent,
-            		fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-            	});
+                colour1: { type: "v3", value: inhabitantColourOne },
+                colour2: { type: "v3", value: inhabitantColourTwo }
+              };
+              objectMaterial = new THREE.ShaderMaterial( {
+                uniforms: objectUniforms,
+                vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+              });
 
               child.material = objectMaterial;
-            }
           });
 
           // scale
@@ -338,7 +355,17 @@ function addObject(x, y, z)
       {
         if (child instanceof THREE.Mesh)
         {
-            child.material = skyMaterial;
+            objectUniforms = {
+              colour1: { type: "v3", value: inhabitantColourOne },
+              colour2: { type: "v3", value: inhabitantColourTwo }
+            };
+            objectMaterial = new THREE.ShaderMaterial( {
+              uniforms: objectUniforms,
+              vertexShader: document.getElementById( 'vertexShader' ).textContent,
+              fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+            });
+
+            child.material = objectMaterial;
         }
       });
 
@@ -355,7 +382,7 @@ function addObject(x, y, z)
 
       objects.push(scaler);
 
-      setBubbleObject(-globe.rotation.z, selectedAsset.name.replace("assets/", ""), skyColourOne, skyColourTwo);
+      setBubbleObject(-globe.rotation.z, selectedAsset.name.replace("assets/", ""), inhabitantColourOne, inhabitantColourTwo);
     });
   });
 }

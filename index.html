@@ -116,8 +116,8 @@ text-align: center;
 
 <body style="background-color:#FFB2C0;" onload="init()">
 <div id="title">
-<span><input class="input" value="bubble"></input></span>
-<span><button class="button2" onclick="searchWorld(this.value)">search</button></span>
+<span><input id="worldQuery" class="input" value="bubble"></input></span>
+<span><button class="button2" onclick="searchWorld()">search</button></span>
 </div>
 
 <div id="viewer">
@@ -315,6 +315,37 @@ landColourTwo = vecC;
 }
 
 setLandColours(landColourOne, landColourTwo);
+}
+
+function setInhabitantColour(number, colour){
+
+  var vecC = new THREE.Vector3(1, 0.45, 0.45);
+
+  if (colour == "fragrant rose"){
+    vecC = new THREE.Vector3(1, 0.45, 0.45);
+  }
+  else if (colour == "dark sandstone"){
+    vecC = new THREE.Vector3(0.78, 0.45, 0.01);
+  }
+  else if (colour == "faded mint"){
+    vecC = new THREE.Vector3(0.73, 0.82, 0.58);
+  }
+  else if (colour == "mocha"){
+    vecC = new THREE.Vector3(0.29, 0.22, 0.15);
+  }
+  else if (colour == "melting honey"){
+    vecC = new THREE.Vector3(0.96, 212, 0.34);
+  }
+  else if (colour == "young wizard"){
+    vecC = new THREE.Vector3(0.34, 0.53, 0.64);
+  }
+
+  if (number == '1'){
+    inhabitantColourOne = vecC;
+  }
+  else{
+    inhabitantColourTwo = vecC;
+  }
 }
 </script>
 
