@@ -20,9 +20,9 @@ width: 100%;
 height: 100%;
 }
 #title{
-margin: 0;
-width: 100%;
-height: 5%;
+margin: auto;
+align: center;
+width: 50%;
 background-color: #FFB2C0;
 color: #9be0f4;
 }
@@ -48,7 +48,7 @@ font-weight: bold;
 font-size: 20px;
 color: #cc5f90;
 }
-#toolOption2{
+#toolOption2, inhabitantColour{
 margin: 0px 14px 0px 0px;
 font-weight: bold;
 font-size: 16px;
@@ -99,11 +99,25 @@ height: 5vh;
 width: 10vw;
 font-size: 120%;
 }
+.button2{
+background-color: #FFB2C0;
+color: #9be0f4;
+height: 5vh;
+width: 15vw;
+font-size: 120%;
+}
+.input{
+color: #FFB2C0;
+height: 3vh;
+width: 30vw;
+text-align: center;
+}
 </style>
 
 <body style="background-color:#FFB2C0;" onload="init()">
 <div id="title">
-<h1 align="center">world</h1>
+<span><input class="input" value="bubble"></input></span>
+<span><button class="button2" onclick="searchWorld(this.value)">search</button></span>
 </div>
 
 <div id="viewer">
@@ -139,14 +153,14 @@ font-size: 120%;
 
    <span id="toolOption1">land</span>
   <span id="toolOption2">colour 1: <select onchange="setLandColour(1, this.value)">
-  <option value="warlock">warlock</option>
-  <option value="jurassic coast">jurassic coast</option>
-  <option value="distant galaxy">distant galaxy</option>
+  <option value="lime-cream">lime-cream</option>
+  <option value="marine dream">marine dream</option>
+  <option value="ocean gleam">ocean gleam</option>
 </select></span>
   <span id="toolOption2">colour 2: <select onchange="setLandColour(2, this.value)">
-  <option value="warlock">warlock</option>
-  <option value="jurassic coast">jurassic coast</option>
-  <option value="distant galaxy">distant galaxy</option>
+  <option value="lime-cream">lime-cream</option>
+  <option value="marine dream">marine dream</option>
+  <option value="ocean gleam">ocean gleam</option>
 </select></span>
 
    <br><br>
@@ -175,6 +189,27 @@ font-size: 120%;
 	<button onclick="searchPoly()">search</button>
   <br />
 	<span id="results"></span>
+	
+	<br />
+	<h3 id="inhabitantColour">what colour are they? 
+	<span id="toolOption2"><select onchange="setInhabitantColour(1, this.value)">
+  <option value="fragrant rose">fragrant rose</option>
+  <option value="dark sandstone">dark sandstone</option>
+  <option value="faded mint">faded mint</option>
+  <option value="mocha">mocha</option>
+  <option value="melting honey">melting honey</option>
+    <option value="young wizard">young wizard</option>
+</select></span>
+<span id="toolOption2">and</span>
+<span id="toolOption2"><select onchange="setInhabitantColour(2, this.value)">
+  <option value="fragrant rose">fragrant rose</option>
+  <option value="dark sandstone">dark sandstone</option>
+  <option value="faded mint">faded mint</option>
+  <option value="mocha">mocha</option>
+  <option value="melting honey">melting honey</option>
+    <option value="young wizard">young wizard</option>
+</select></span>
+</h3>
 
 </div>
 
@@ -197,6 +232,9 @@ var skyColourTwo = new THREE.Vector3(0.33, 0.31, 0.4); //'rgb(84, 79, 102)';
 
 var landColourOne = new THREE.Vector3(0.33, 0.31, 0.4); //'rgb(84, 79, 102)';
 var landColourTwo = new THREE.Vector3(0.1, 0.2, 0.3); //'rgb(84, 79, 102)';
+
+var inhabitantColourOne = new THREE.Vector3(1, 0.45, 0.45); //'rgb(84, 79, 102)';
+var inhabitantColourTwo = new THREE.Vector3(0.78, 0.45, 0.01); //'rgb(84, 79, 102)';
 
 function openTool(evt, toolName) {
     var i, tabcontent, tablinks;
@@ -251,21 +289,21 @@ document.getElementById("viewer").style.background = 'linear-gradient(to bottom,
 function setLandColour(number, colour){
 
 var c;
-var vecC = new THREE.Vector3(0.33, 0.31, 0.4);
+var vecC = new THREE.Vector3(0.77, 0.98, 0.48);
 
-if (colour == "warlock"){
-//0.33, 0.31, 0.4
-vecC = new THREE.Vector3(0.33, 0.31, 0.4);
+if (colour == "lime-cream"){
+//0.77, 0.98, 0.48
+vecC = new THREE.Vector3(0.77, 0.98, 0.48);
 c = "rgb(84, 79, 102)";
 }
-else if (colour == "jurassic coast"){
-//0.94, 0.88, 0.76
-vecC = new THREE.Vector3(0.94, 0.88, 0.76);
+else if (colour == "marine dream"){
+//0.15, 0.52, 0.47
+vecC = new THREE.Vector3(0.15, 0.52, 0.47);
 c = "rgb(240, 225, 195)";
 }
-else if (colour == "distant galaxy"){
-//0.02, 0.00, 0.03
-vecC = new THREE.Vector3(0.02, 0.00, 0.03);
+else if (colour == "ocean gleam"){
+//0.04, 0.28, 0.33
+vecC = new THREE.Vector3(0.04, 0.28, 0.33);
 c = "rgb(5, 1, 7)";
 }
 
@@ -277,6 +315,43 @@ landColourTwo = vecC;
 }
 
 setLandColours(landColourOne, landColourTwo);
+}
+
+function setInhabitantColour(number, colour){
+
+var vecC = new THREE.Vector3(1, 0.45, 0.45);
+
+if (colour == "fragrant rose"){
+vecC = new THREE.Vector3(1, 0.45, 0.45);
+}
+else if (colour == "dark sandstone"){
+vecC = new THREE.Vector3(0.78, 0.45, 0.01);
+}
+else if (colour == "faded mint"){
+vecC = new THREE.Vector3(0.73, 0.82, 0.58);
+}
+else if (colour == "mocha"){
+vecC = new THREE.Vector3(0.29, 0.22, 0.15);
+}
+else if (colour == "melting honey"){
+vecC = new THREE.Vector3(0.96, 212, 0.34);
+}
+else if (colour == "young wizard"){
+vecC = new THREE.Vector3(0.34, 0.53, 0.64);
+}
+
+if (number == '1'){
+inhabitantColourOne = vecC;
+}
+else{
+inhabitantColourTwo = vecC;
+}
+
+setInhabitantColours(inhabitantColourOne, inhabitantColourTwo);
+}
+
+function searchWorld(worldName){
+
 }
 
 function sendGame(){
