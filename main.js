@@ -1,7 +1,7 @@
 const WIDTH = viewer.offsetWidth;
 const HEIGHT = viewer.offsetHeight;
 
-var camera = new THREE.OrthographicCamera( -0.5, 0.5, 0.5, -0.5, 0, 100);
+var camera = new THREE.OrthographicCamera( -0.5, 0.5, 0.5, -0.5, 0, 1000);
 camera.position.set(0, 0, -100);
 camera.lookAt(0, 0, 0);
 
@@ -12,7 +12,7 @@ var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
 scene.add( ambient );
 
 var light = new THREE.DirectionalLight( 0xffffff, 0.75 );
-light.position.set( 1, 0, 1 );
+light.position.set( 1, 1, -1 );
 light.lookAt(0, 0, 0);
 scene.add( light );
 
@@ -41,7 +41,7 @@ function animate()
 {
 	var time = performance.now() / 1000;
 
-	globe.rotation.y = time / 10;
+	globe.rotation.z = time / 10;
 
 	renderer.render( scene, camera );
 	requestAnimationFrame( animate );
@@ -141,10 +141,14 @@ function addObject(x, y, z)
 
       // scale
       var scaler = new THREE.Group();
-      scaler.position.set(x, y, z);
+      scaler.position.set(0, 0.45, 0);
       scaler.add(object);
-      scaler.scale.setScalar(box.getSize().length() * 0.01);
-      scene.add(scaler);
+      scaler.scale.setScalar(1 / box.getSize().length() * 0.5);
+
+      var pivot = new THREE.Group();
+      pivot.rotation.z = -globe.rotation.z;
+      globe.add(pivot);
+      pivot.add(scaler);
     });
   });
 }
@@ -154,18 +158,8 @@ function onMouseDown(e)
   e.preventDefault();
 
   var origin = new THREE.Vector3();
-  origin.x = ((event.clientX - viewer.offsetLeft) / WIDTH) - 0.5;
-  origin.z = ((event.clientY - viewer.offsetTop) / WIDTH) - 0.5;
-  origin.z = -10;
-
-  var raycaster = new THREE.Raycaster(origin, new THREE.Vector3(0, 0, 1), 0, 100);
-
-  var intersects = raycaster.intersectObject(globe);
-
-  console.log(intersects);
-
-  if (intersects.object == globe)
-  {
-    addObject(intersects.point.x, intersects.point.y, intersects.point.z);
-	}
+  origin.x = -((event.clientX - viewer.offsetLeft) / WIDTH) + 0.5;
+  origin.y = -((event.clientY - viewer.offsetTop) / WIDTH) + 0.5;
+  origin.z = 0;
+  addObject(origin.x, origin.y, origin.z);
 }
