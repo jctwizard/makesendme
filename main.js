@@ -30,11 +30,32 @@ scene.add(globe);
 var selectedAsset;
 var selectedFormat;
 
+var skyUniforms, skyMaterial, skyMesh;
+
+skyMesh = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), new THREE.MeshBasicMaterial( {color: 0xffff00} ));
+
+skyMesh.rotation.x = Math.PI;
+skyMesh.position.y = -0.5
+
+scene.add(skyMesh);
+
 function init()
 {
   viewer.addEventListener('mousedown', onMouseDown, false);
 
   searchPoly();
+
+  skyUniforms = {
+		colour1: { type: "v3", value: new THREE.Vector3(1, 0, 0) },
+		colour2: { type: "v3", value: new THREE.Vector3(0, 0, 1) }
+	};
+	skyMaterial = new THREE.ShaderMaterial( {
+		uniforms: skyUniforms,
+		vertexShader: document.getElementById( 'vertexShader' ).textContent,
+		fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+	});
+
+  skyMesh.material = skyMaterial;
 }
 
 function animate()
@@ -42,6 +63,7 @@ function animate()
 	var time = performance.now() / 1000;
 
 	globe.rotation.z = time / 10;
+	skyMesh.rotation.z = time / 10;
 
 	renderer.render( scene, camera );
 	requestAnimationFrame( animate );
